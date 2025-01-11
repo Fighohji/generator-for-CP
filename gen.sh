@@ -6,8 +6,8 @@ if command -v clang++ &> /dev/null; then
     STACK_SIZE_OPTION="-Xlinker -stack_size -Xlinker 0x8000000"
 elif command -v g++ &> /dev/null; then
     CXX=g++
-    # 可能用不了，用不上直接关掉就行
-    STACK_SIZE_OPTION="-Wl,--stack=268435456"
+    # 自行查阅如何开大占空间
+    STACK_SIZE_OPTION=""
 else
     echo "No suitable compiler found!"
     exit 1
