@@ -3,12 +3,16 @@
 # 编译 C++ 程序
 if command -v clang++ &> /dev/null; then
     CXX=clang++
+    STACK_SIZE_OPTION="-Xlinker -stack_size -Xlinker 0x8000000"
 elif command -v g++ &> /dev/null; then
     CXX=g++
+    # 可能用不了，用不上直接关掉就行
+    STACK_SIZE_OPTION="-Wl,--stack=268435456"
 else
     echo "No suitable compiler found!"
     exit 1
 fi
+
 # 检查是否传递了足够的参数
 if [ "$#" -ne 2 ]; then
     echo "Usage: $0 l r"
@@ -20,9 +24,9 @@ fi
 # 获取参数 l 和 r
 l=$1
 r=$2
-# 编译 C++ 程序 for clang++
-# 如果是g++需要更改申请占空间的方式
-$CXX -Xlinker -stack_size -Xlinker 0x8000000 -o main main.cpp -std=c++20 -O2
+
+# 编译 C++ 程序
+$CXX $STACK_SIZE_OPTION -o main main.cpp -std=c++20 -O2
 
 # 检查编译是否成功
 if [ ! -f main ]; then
@@ -30,7 +34,8 @@ if [ ! -f main ]; then
     exit 1
 fi
 
-$CXX -Xlinker -stack_size -Xlinker 0x8000000 -o gen gen.cpp -std=c++20 -O2
+# 编译生成器程序
+$CXX $STACK_SIZE_OPTION -o gen gen.cpp -std=c++20 -O2
 
 # 检查编译是否成功
 if [ ! -f gen ]; then
@@ -42,7 +47,6 @@ fi
 ./gen $l $r
 
 for (( count=$l; count<=$r; count++ )); do
-    
     # 运行待测程序并保存输出
     ./main < "$count.in" > "$count.out"
 
