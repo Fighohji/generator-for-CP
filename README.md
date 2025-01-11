@@ -4,7 +4,8 @@ git clone https://github.com/Fighohji/generator-for-CP.git
 
 chomod -x gen.sh
 
-## implement your generator in gen.cpp
+# implement your generator in gen.cpp
+# implement std in main.cpp
 
 ./gen.sh $l $r
 ```
